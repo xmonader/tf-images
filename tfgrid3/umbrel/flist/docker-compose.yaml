@@ -1,0 +1,10 @@
+services:
+  umbrel:
+    image: threefolddev/umbrel_app:v1.2.2
+    container_name: umbrel
+    ports:
+      - 80:80
+    volumes:
+      - "/data:/data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    stop_grace_period: 1m

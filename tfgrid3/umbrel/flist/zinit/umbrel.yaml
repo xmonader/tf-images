@@ -1,0 +1,3 @@
+exec: /bin/bash -xc "docker compose up -d"
+after:
+ - dockerd
