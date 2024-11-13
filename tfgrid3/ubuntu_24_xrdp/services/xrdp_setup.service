@@ -1,0 +1,10 @@
+[Unit]
+Description=Set XRDP
+After=ufw_setup.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/xrdp_setup.sh
+
+[Install]
+WantedBy=multi-user.target

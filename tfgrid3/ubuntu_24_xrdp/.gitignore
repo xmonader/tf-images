@@ -1,0 +1,5 @@
+/ubuntu-noble
+/logs
+wget-log
+*.tar.gz
+ubuntu-24.04_vm_xrdp.tar.gz
