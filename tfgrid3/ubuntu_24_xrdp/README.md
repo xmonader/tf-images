@@ -23,6 +23,8 @@
 
 This directory contains a script to create a VM flist with Ubuntu and XRDP for the ThreeFold Grid. The flist includes a desktop environment (XFCE) and XRDP, allowing for remote desktop access to your deployed VM.
 
+> Note: This is not an officially supported flist. You can use it as a guide to build your own.
+
 ## Prerequisites
 
 - A Linux system with root access
