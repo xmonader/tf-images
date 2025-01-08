@@ -1,2 +1,1 @@
-exec: nginx -g "daemon off;"
-restart: true
+exec: /usr/sbin/nginx -g 'daemon off;'
