@@ -5,8 +5,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt -y install wget curl vim net-tools iputils-ping openssh-server
 
-RUN wget -O /sbin/zinit https://github.com/threefoldtech/zinit/releases/download/v0.2.5/zinit && \
-    chmod +x /sbin/zinit
+# Download and install latest zinit
+RUN curl -s https://api.github.com/repos/threefoldtech/zinit/releases/latest | \
+    grep "browser_download_url" | \
+    cut -d '"' -f 4 | \
+    wget -qi - -O /sbin/zinit
+
+RUN chmod +x /sbin/zinit
 
 ENV ALGORAND_DATA=/var/lib/algorand
 RUN echo export ALGORAND_DATA=/var/lib/algorand >> ~/.bashrc

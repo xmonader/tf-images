@@ -22,7 +22,7 @@
 ```bash
 SSH_KEY # your public ssh key
 NETWORK # one of algorand nets [mainnet, testnet, betanet, devnet]
-NODE_TYPE # algorand node type [default, participant, relay, indexer]
+NODE_TYPE # algorand node type [default, relay, indexer]
 ACCOUNT_MNEMONICS # account mnemonics that have some microalgo to do the participation transaction
 FIRST_ROUND # first validation block (get it from algoexplorer or use 20M)
 LAST_ROUND # last validation block (30M is reasonable range)
