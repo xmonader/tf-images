@@ -10,6 +10,7 @@ chmod +x /sbin/zinit
 
 RUN apt upgrade -y
 
+
 COPY zinit /etc/zinit
 COPY start.sh /start.sh
 
@@ -30,5 +31,13 @@ RUN curl -sL https://prosody.im/files/prosody-debian-packages.key -o /etc/apt/ke
     echo "deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.jitsi.org stable/" | tee /etc/apt/sources.list.d/jitsi-stable.list && \
     apt update && \
     apt install -y lua5.2
+ARG USERNAME=jitsi
+ARG USER_UID=1001
+ARG USER_GID=$USER_UID
 
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
+
+USER $USERNAME
 ENTRYPOINT  ["zinit", "init"]
