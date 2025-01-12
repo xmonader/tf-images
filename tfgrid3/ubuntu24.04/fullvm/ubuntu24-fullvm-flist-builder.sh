@@ -29,9 +29,8 @@ export PATH=/usr/local/sbin/:/usr/local/bin/:/usr/sbin/:/usr/bin/:/sbin:/bin
 rm /etc/resolv.conf
 echo 'nameserver 1.1.1.1' > /etc/resolv.conf
 apt-get update
-apt-get install cloud-init openssh-server curl initramfs-tools -y
+apt-get install cloud-init openssh-server curl initramfs-tools linux-virtual -y
 cloud-init clean
-apt-get install linux-modules-extra-6.8.0-31-generic -y
 echo 'fs-virtiofs' >> /etc/initramfs-tools/modules
 update-initramfs -c -k all
 apt-get clean
@@ -45,18 +44,6 @@ arch-chroot ubuntu-noble /root/setup_inside_chroot.sh
 # Clean up
 rm ubuntu-noble/root/setup_inside_chroot.sh
 rm -rf ubuntu-noble/dev/*
-
-# Check if extract-vmlinux is available and install if it's not
-if ! command -v extract-vmlinux &>/dev/null; then
-	    echo "extract-vmlinux not found, installing..."
-	    curl -O https://raw.githubusercontent.com/torvalds/linux/master/scripts/extract-vmlinux
-	    chmod +x extract-vmlinux
-            mv extract-vmlinux /usr/local/bin
-fi
-
-# Kernel Extraction
-extract-vmlinux ubuntu-noble/boot/vmlinuz | tee ubuntu-noble/boot/vmlinuz-6.8.0-31-generic.elf > /dev/null
-mv ubuntu-noble/boot/vmlinuz-6.8.0-31-generic.elf ubuntu-noble/boot/vmlinuz-6.8.0-31-generic
 
 # Create a compressed archive of the configured system for uploading to hub.
 tar -czf ubuntu-24.04_fullvm.tar.gz -C ubuntu-noble .
