@@ -31,7 +31,7 @@ RUN curl -sL https://prosody.im/files/prosody-debian-packages.key -o /etc/apt/ke
     echo "deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.jitsi.org stable/" | tee /etc/apt/sources.list.d/jitsi-stable.list && \
     apt update && \
     apt install -y lua5.2
-ARG USERNAME=jitsi
+ARG USERNAME=prosody
 ARG USER_UID=1001
 ARG USER_GID=$USER_UID
 
