@@ -1,0 +1,4 @@
+exec: /bin/bash /usr/local/bin/start-fk.sh
+after:
+      - dockerd
+oneshot: true
