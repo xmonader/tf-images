@@ -1,4 +1,4 @@
-FROM archlinux:latest
+FROM archlinux:base-20240101.0.204074
 
 # Update system and install packages
 RUN pacman -Syu --noconfirm && \
@@ -15,11 +15,6 @@ COPY scripts/ufw.sh /usr/local/bin/
 
 # Adding zinit config files
 ADD zinit /etc/zinit/
-
-# Install latest mycelium
-RUN mycelium_version=$(curl -s https://api.github.com/repos/threefoldtech/mycelium/releases/latest | grep 'tag_name' | cut -d '"' -f 4 ) && \
-    wget "https://github.com/threefoldtech/mycelium/releases/download/${mycelium_version}/mycelium-x86_64-unknown-linux-musl.tar.gz" && \
-    tar -xzf mycelium-x86_64-unknown-linux-musl.tar.gz -C /usr/local/bin/
 
 # Cleaning up
 RUN pacman -Scc --noconfirm
