@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive\
-    apt-get -qq install curl net-tools iputils-ping openssh-server docker.io \
+    apt-get -qq -y install curl net-tools iputils-ping openssh-server docker.io \
     fswatch jq rsync sudo iproute2 git gettext-base python3 gnupg avahi-daemon avahi-discover libnss-mdns \
     && rm -rf /var/lib/apt/lists/*
 

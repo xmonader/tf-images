@@ -1,7 +1,7 @@
 FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS base
 
 # Install Git
-RUN apt-get update && \
+RUN apt-get update --no-install-recommends && \
     apt-get install -y git && \
     rm -rf /var/lib/apt/lists/*
 
