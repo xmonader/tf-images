@@ -1,8 +1,8 @@
 FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS base
 
 # Install Git
-RUN apt-get update --no-install-recommends && \
-    apt-get install -y git && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
     rm -rf /var/lib/apt/lists/*
 
 # Clone the Umbrel repository at tag 1.2.2
