@@ -1,0 +1,4 @@
+exec: /root/scripts/ufw.sh
+after:
+  - install_jitsi
+oneshot: true

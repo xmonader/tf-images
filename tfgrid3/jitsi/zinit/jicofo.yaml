@@ -1,0 +1,3 @@
+exec: root/scripts/jicofo.sh
+after:
+  - prosody

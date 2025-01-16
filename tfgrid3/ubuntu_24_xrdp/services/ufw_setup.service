@@ -1,0 +1,10 @@
+[Unit]
+Description=Set firewall
+Before=ssh.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/ufw_setup.sh
+
+[Install]
+WantedBy=multi-user.target

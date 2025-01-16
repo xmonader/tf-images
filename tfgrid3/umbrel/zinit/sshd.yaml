@@ -1,4 +1,4 @@
-exec: /bin/bash  -c "/usr/sbin/sshd;"
+exec: /usr/sbin/sshd -D
 test: /bin/bash -c "service ssh status"
 after: 
   - ssh_config

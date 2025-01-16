@@ -1,0 +1,4 @@
+exec: /root/scripts/setup_hostname.sh
+after:
+  - sshd
+oneshot: true

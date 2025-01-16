@@ -1,0 +1,3 @@
+exec: /root/scripts/prosody.sh
+after:
+  - install_jitsi

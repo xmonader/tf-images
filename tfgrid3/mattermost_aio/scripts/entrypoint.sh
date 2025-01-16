@@ -13,6 +13,9 @@ cat <<EOF > /tmp/init_postgres.sql
 create database mattermost;
 create user $MM_USERNAME password '$DB_PASSWORD';
 grant all privileges on database mattermost to $MM_USERNAME;
+GRANT ALL ON DATABASE mattermost TO $MM_USERNAME;
+ALTER DATABASE mattermost OWNER TO $MM_USERNAME;
+GRANT USAGE, CREATE ON SCHEMA PUBLIC TO $MM_USERNAME;
 \c mattermost
 CREATE EXTENSION pg_trgm;
 CREATE EXTENSION unaccent;
@@ -58,12 +61,14 @@ if [ "$1" = 'mattermost' ]; then
     jq '.FileSettings.Directory = "/mattermost/data/"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.FileSettings.EnablePublicLink = true' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.FileSettings.PublicLinkSalt = "'$(generate_salt)'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
-    jq '.EmailSettings.SendEmailNotifications = false' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.EmailSettings.SendEmailNotifications = true' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.EmailSettings.FeedbackEmail = ""' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
-    jq '.EmailSettings.SMTPUsername = "'$SMTPUSERNAME'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
-    jq '.EmailSettings.SMTPPassword = "'$SMTPPASSWORD'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
-    jq '.EmailSettings.SMTPServer = "'$SMTPSERVER'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
-    jq '.EmailSettings.SMTPPort = "'$SMTPPORT'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.EmailSettings.SMTPUsername = "'$SMTPUsername'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.EmailSettings.SMTPPassword = "'$SMTPPassword'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.EmailSettings.SMTPServer = "'$SMTPServer'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.EmailSettings.SMTPPort = "'$SMTPPort'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.EmailSettings.ConnectionSecurity = "STARTTLS"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.EmailSettings.EnableSMTPAuth = true' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.EmailSettings.InviteSalt = "'$(generate_salt)'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.EmailSettings.PasswordResetSalt = "'$(generate_salt)'"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.EmailSettings.EnableSignUpWithEmail = false' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG

@@ -1,0 +1,10 @@
+[Unit]
+Description=Set correct ownership and permissions for sudo
+Before=ssh.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/set_sudo_permissions.sh
+
+[Install]
+WantedBy=multi-user.target

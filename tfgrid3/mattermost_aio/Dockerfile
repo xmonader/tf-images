@@ -15,7 +15,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y curl jq sudo libffi-dev netcat-openbsd tzdata libcap2-bin postgresql postgresql postgresql-contrib openssh-server ufw\
     && rm -rf /tmp/* \
-    && wget -O /sbin/zinit https://github.com/threefoldtech/zinit/releases/download/v0.2.5/zinit \
+    && wget -O /sbin/zinit https://github.com/threefoldtech/zinit/releases/download/v0.2.14/zinit \
     && chmod +x /sbin/zinit \
     && mkdir -p /etc/zinit
 COPY scripts /etc/zinit

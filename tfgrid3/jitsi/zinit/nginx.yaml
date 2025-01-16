@@ -1,0 +1,4 @@
+exec: /root/scripts/nginx.sh
+oneshot: true
+after:
+  - install_jitsi

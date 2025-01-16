@@ -1,0 +1,4 @@
+exec: /root/scripts/install_jitsi.sh
+after:
+  - setup_hostname
+oneshot: true
