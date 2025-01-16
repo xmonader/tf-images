@@ -28,10 +28,11 @@ cat <<EOF > ubuntu-noble/root/setup_inside_chroot.sh
 export PATH=/usr/local/sbin/:/usr/local/bin/:/usr/sbin/:/usr/bin/:/sbin:/bin
 rm /etc/resolv.conf
 echo 'nameserver 1.1.1.1' > /etc/resolv.conf
+echo "ubuntu-noble" > /etc/hostname
 apt-get update
 apt-get install cloud-init openssh-server curl initramfs-tools -y
 cloud-init clean
-apt-get install linux-image-6.8.0-31-generic linux-modules-extra-6.8.0-31-generic -y
+apt-get install linux-image-6.8.0-31-generic -y
 echo 'fs-virtiofs' >> /etc/initramfs-tools/modules
 update-initramfs -c -k all
 update-grub
