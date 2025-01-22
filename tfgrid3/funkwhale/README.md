@@ -24,18 +24,30 @@ Convert the docker image to Flist is using [Docker Hub Converter tool](https://h
 
 ## Environment Variables
 
-Several environment variables need to be configured before deploying Funkwhale:
+Several environment variables need to be configured before deploying Funkwhale. SMTP configuration is optional—if not configured, Funkwhale will still function, but it will not send any emails (e.g., notifications, password resets).
 
+### **Required for Basic Functionality**
 - `FUNKWHALE_SUPERUSER_NAME`: The username for the Funkwhale superuser.
 - `FUNKWHALE_SUPERUSER_EMAIL`: The email for the superuser account.
-- `FUNKWHALE_SUPERUSER_PASSWORD`: Password for the superuser account.
-- `FUNKWHALE_VERSION`: The version of Funkwhale to use (default: `1.4.0`).
+- `FUNKWHALE_SUPERUSER_PASSWORD`: The password for the superuser account.
 - `Domain`: The domain name for the Funkwhale instance (e.g., `funkwhale.example.com`).
 - `DJANGO_SECRET_KEY`: A unique secret key for Django. This environment variable is generated automatically by the **start script**.
 
-These variables are passed via `.env` files or Zinit service configurations. Ensure they are set properly before deployment.
+### **Optional for SMTP Configuration**
+If you want Funkwhale to send emails, such as notifications or password resets, you need to configure the following variables:
 
-## SSL Configuration
-This setup uses Certbot to generate and configure SSL certificates for your domain. Ensure the domain is properly configured with DNS settings that point to your server. The certificates are generated automatically during the deployment process.
+- `EMAIL_HOST`: The SMTP server address (e.g., `smtp.sendgrid.net`).
+- `EMAIL_PORT`: The port used by the SMTP server (e.g., `587`).
+- `EMAIL_USERNAME`: The username for SMTP authentication (e.g., `apikey` for SendGrid).
+- `EMAIL_PASSWORD`: The password or API key for SMTP authentication.
+- `EMAIL_PROTOCOL`: The protocol used for email communication. Supported options:
+  - `smtp`: Plain SMTP communication.
+  - `smtp+ssl`: SMTP with SSL encryption (port `465`).
+  - `smtp+tls`: SMTP with TLS encryption (port `587`).
+- `DEFAULT_FROM_EMAIL`: The default sender email address (e.g., `peter@funkwhale-test.com`).
 
+If these variables are not set, Funkwhale will default to outputting emails to the console (`consolemail://`), and emails will not actually be sent.
+
+### **Passing Environment Variables**
+These environment variables are passed via `.env` files or Zinit service configurations. Ensure they are set properly before deployment to guarantee correct operation.
 

@@ -11,10 +11,7 @@ RUN apt-get update && \
     gettext \
     gnupg \
     openssh-server \
-    ufw \
-    nginx \
-    certbot \
-    python3-certbot-nginx && \
+    ufw && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -26,10 +23,8 @@ RUN curl -s https://api.github.com/repos/threefoldtech/zinit/releases/latest | \
     chmod +x /sbin/zinit
 
 # Copy configuration scripts
-COPY scripts/ufw.sh /usr/local/bin/
-COPY scripts/dockerd.sh /usr/local/bin/
-COPY scripts/start-fk.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/ufw.sh /usr/local/bin/dockerd.sh /usr/local/bin/start-fk.sh
+COPY scripts/* /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh 
 
 # Add Zinit configuration files
 ADD zinit /etc/zinit/
@@ -48,8 +43,8 @@ RUN apt-get update && \
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Expose ports for HTTP and SSH access
-EXPOSE 5000 222
+# Expose ports for HTTP access
+EXPOSE 5000
 
 # Command to run Zinit in the container
 CMD ["/sbin/zinit", "init", "--container"]

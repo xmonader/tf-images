@@ -1,4 +1,0 @@
-exec: nginx -g "daemon off;"
-after:
-    - dockerd 
-restart: true
