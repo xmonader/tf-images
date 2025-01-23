@@ -1,8 +1,10 @@
-FROM ubuntu:23.10
+FROM ubuntu:23.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install pcakages
-RUN apt update && \
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu|http://old-releases.ubuntu.com/ubuntu|g' /etc/apt/sources.list && \
+    sed -i 's|http://security.ubuntu.com/ubuntu|http://old-releases.ubuntu.com/ubuntu|g' /etc/apt/sources.list && \
+    apt update && \
     apt upgrade -y && \
     apt install -y wget curl git openssh-server ufw
 
@@ -17,11 +19,6 @@ COPY scripts/ufw.sh /usr/local/bin/
 
 # Adding zinit config files
 ADD zinit  /etc/zinit/  
-
-# Install latest myceilum
-RUN mycelium_version=$(curl -s https://api.github.com/repos/threefoldtech/mycelium/releases/latest | grep 'tag_name' | cut -d '"' -f 4 ) && \
-    wget "https://github.com/threefoldtech/mycelium/releases/download/${mycelium_version}/mycelium-x86_64-unknown-linux-musl.tar.gz" && \
-    tar -xzf mycelium-x86_64-unknown-linux-musl.tar.gz -C /usr/local/bin/
 
 # Cleaning up
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
