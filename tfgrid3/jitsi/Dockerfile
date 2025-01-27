@@ -21,6 +21,7 @@ COPY config /root/config
 
 RUN chmod +x /root/scripts/*.sh
 
+RUN apt-get update --fix-missing
 RUN apt install -y curl gnupg2 nginx-full apt-transport-https \
     software-properties-common openjdk-11-jdk ufw && \
     apt-add-repository universe -y
