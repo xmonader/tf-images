@@ -1,14 +1,15 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && \
 apt -y install wget openssh-server
 
-RUN wget -O /sbin/zinit https://github.com/threefoldtech/zinit/releases/download/v0.2.5/zinit && \
+RUN wget -O /sbin/zinit https://github.com/threefoldtech/zinit/releases/download/v0.2.14/zinit && \
 chmod +x /sbin/zinit
 
 RUN apt upgrade -y
+
 
 COPY zinit /etc/zinit
 COPY start.sh /start.sh
@@ -20,6 +21,7 @@ COPY config /root/config
 
 RUN chmod +x /root/scripts/*.sh
 
+RUN apt-get update --fix-missing
 RUN apt install -y curl gnupg2 nginx-full apt-transport-https \
     software-properties-common openjdk-11-jdk ufw && \
     apt-add-repository universe -y
@@ -30,5 +32,13 @@ RUN curl -sL https://prosody.im/files/prosody-debian-packages.key -o /etc/apt/ke
     echo "deb [signed-by=/usr/share/keyrings/jitsi-keyring.gpg] https://download.jitsi.org stable/" | tee /etc/apt/sources.list.d/jitsi-stable.list && \
     apt update && \
     apt install -y lua5.2
+ARG USERNAME=prosody
+ARG USER_UID=1001
+ARG USER_GID=$USER_UID
 
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
+
+USER $USERNAME
 ENTRYPOINT  ["zinit", "init"]
