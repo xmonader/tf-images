@@ -1,0 +1,92 @@
+FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS base
+
+# Install Git
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+# Clone the Umbrel repository at tag 1.2.2
+RUN git clone --branch 1.2.2 --single-branch https://github.com/getumbrel/umbrel.git /umbrel
+
+# Apply custom patches
+COPY source /umbrel/packages/umbreld/source
+
+#########################################################################
+# ui build stage
+#########################################################################
+
+FROM --platform=$BUILDPLATFORM node:18 AS ui-build
+
+# Install pnpm
+RUN npm install -g pnpm@8
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the package.json and package-lock.json
+COPY --from=base /umbrel/packages/ui/ .
+
+# Install the dependencies
+RUN rm -rf node_modules || true
+RUN pnpm install
+
+# Build the app
+RUN pnpm run build
+
+#########################################################################
+# backend build stage
+#########################################################################
+
+FROM node:18 AS be-build
+
+COPY --from=base /umbrel/packages/umbreld /tmp/umbreld
+COPY --from=ui-build /app/dist /tmp/umbreld/ui
+WORKDIR /tmp/umbreld
+RUN chmod +x /tmp/umbreld/source/modules/apps/legacy-compat/app-script
+
+# Install the dependencies
+RUN rm -rf node_modules || true
+RUN npm install
+
+# Build the app
+RUN npm run build -- --native
+
+#########################################################################
+# umbrelos build stage
+#########################################################################
+
+FROM debian:bookworm-slim AS umbrelos
+ENV NODE_ENV=production
+
+ARG TARGETARCH
+ARG VERSION_ARG="0.0"
+ARG YQ_VERSION="v4.44.3"
+ARG DEBCONF_NOWARNINGS="yes"
+ARG DEBIAN_FRONTEND="noninteractive"
+ARG DEBCONF_NONINTERACTIVE_SEEN="true"
+
+RUN set -eu \
+  && apt-get update -y \
+  && apt-get --no-install-recommends -y install sudo nano vim less man iproute2 iputils-ping curl wget ca-certificates dmidecode \
+  && apt-get --no-install-recommends -y install python3 fswatch jq rsync curl git gettext-base gnupg libnss-mdns procps tini \
+  && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
+  && apt-get update -y \
+  && apt-get --no-install-recommends -y install docker-ce-cli docker-compose-plugin \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+  && curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${TARGETARCH} \
+  && chmod +x /usr/local/bin/yq \
+  && echo "$VERSION_ARG" > /run/version \
+  && adduser --gecos "" --disabled-password umbrel \
+  && echo "umbrel:umbrel" | chpasswd \
+  && usermod -aG sudo umbrel
+
+# Install umbreld
+COPY --chmod=755 ./entry.sh /run/
+COPY --from=be-build --chmod=755 /tmp/umbreld/build/umbreld /usr/local/bin/umbreld
+
+VOLUME /data
+EXPOSE 80 443
+
+ENTRYPOINT ["/usr/bin/tini", "-s", "/run/entry.sh"]

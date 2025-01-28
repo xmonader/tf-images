@@ -1,4 +1,0 @@
-exec: /bin/sh -xc "/scripts/register.sh;"
-oneshot: true
-after: 
-  - umbrel

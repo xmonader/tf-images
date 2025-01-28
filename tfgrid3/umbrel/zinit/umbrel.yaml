@@ -1,9 +1,0 @@
-exec: /bin/bash -xc "
-    UMBREL_DISK=${UMBREL_DISK:-};
-    /scripts/umbrel-start.sh;
-    cd $UMBREL_DISK/umbrel;
-    docker-compose up  --no-recreate;" 
-test:  /bin/bash -c "pgrep docker-compose"
-after:
- - dockerd
- - config
