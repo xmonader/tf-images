@@ -11,7 +11,7 @@ if [ -z "${K3S_FLANNEL_IFACE}" ]; then
 fi
 
 if [ -z "${K3S_URL}" ]; then
-    # Add additional SANs for planetary network IP, public IPv4, and public IPv6  
+    # Add additional SANs for planetary network IP, public IPv4, and public IPv6
     # https://github.com/threefoldtech/tf-images/issues/98
     ifaces=( "tun0" "eth1" "eth2" )
 
@@ -20,11 +20,18 @@ if [ -z "${K3S_URL}" ]; then
         addrs="$(ip addr show $iface | grep -E "inet |inet6 "| grep "global" | cut -d '/' -f1 | cut -d ' ' -f6)"
         for addr in $addrs
         do
-            # `ip route get` just used here to validate the ip addr to handle edge caese where parsing could misbehave 
+            # `ip route get` just used here to validate the ip addr to handle edge caese where parsing could misbehave
             ip route get $addr && EXTRA_ARGS="$EXTRA_ARGS --tls-san $addr"
         done
     done
+
+    # Enable daul-stack and adding IPv4 and IPv6 CIDRs
+    EXTRA_ARGS="$EXTRA_ARGS --cluster-cidr=10.42.0.0/16,2001:cafe:42::/56"
+    EXTRA_ARGS="$EXTRA_ARGS --service-cidr=10.43.0.0/16,2001:cafe:43::/112"
+
+    echo $EXTRA_ARGS
     exec k3s server --flannel-iface $K3S_FLANNEL_IFACE $EXTRA_ARGS 2>&1
 else
+    echo $EXTRA_ARGS
     exec k3s agent --flannel-iface $K3S_FLANNEL_IFACE $EXTRA_ARGS 2>&1
 fi
