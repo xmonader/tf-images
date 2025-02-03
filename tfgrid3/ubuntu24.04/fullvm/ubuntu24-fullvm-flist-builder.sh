@@ -30,7 +30,7 @@ rm /etc/resolv.conf
 echo 'nameserver 1.1.1.1' > /etc/resolv.conf
 echo "ubuntu-noble" > /etc/hostname
 apt-get update
-apt-get install cloud-init openssh-server curl initramfs-tools linux-virtual -y
+apt-get install cloud-init openssh-server curl initramfs-tools -y
 cloud-init clean
 apt-get install linux-image-6.8.0-31-generic -y
 echo 'fs-virtiofs' >> /etc/initramfs-tools/modules
