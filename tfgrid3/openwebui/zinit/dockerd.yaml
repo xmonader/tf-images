@@ -1,0 +1,1 @@
+exec: /usr/bin/dockerd --data-root /mnt/data/docker
