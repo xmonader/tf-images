@@ -1,0 +1,2 @@
+exec: /scripts/sshd_init.sh
+oneshot: true
